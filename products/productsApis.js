@@ -2,16 +2,16 @@ import { Router } from "express";
 import { MongoClient, ObjectId } from "mongodb";
 export const productsApis = Router();
 
-productsApis.get("/products/abc", async (req, res) => {
+productsApis.get("/get-all-products", async (req, res) => {
   console.log("im inside function");
   const client = new MongoClient("mongodb://localhost:27017/");
   const connection = await client.connect();
   const db = connection.db("mothadata");
   console.log("connection is good");
 
-  const dbResponse = await db.collection("products").find().toArray();
+  const dbResponse = await db.collection("products").find({}).toArray();
   console.log("GET  /get-all-users api called successfully");
-  res.json(dbResponse);
+  res.json({ message: "created", data: dbResponse });
 });
 
 productsApis.post("/create-products", async (req, res) => {

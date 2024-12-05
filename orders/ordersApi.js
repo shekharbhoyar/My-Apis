@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { MongoClient } from "mongodb";
-import { body, ExpressValidator, validationResult } from "express-validator";
+import { body, validationResult } from "express-validator";
 export const ordersApis = Router();
 
 ordersApis.get("/get-all-orders", async (req, res) => {
@@ -9,7 +9,7 @@ ordersApis.get("/get-all-orders", async (req, res) => {
   const db = connection.db("orders");
   const dbResponse = await db.collection("orderlist").find({}).toArray();
   console.log(dbResponse);
-  res.json(dbResponse);
+  res.json({ massege: "list of orders", data: dbResponse });
 });
 
 ordersApis.post(
@@ -47,7 +47,8 @@ ordersApis.post(
         .toArray();
       if (data.length > 0) {
         return res.json({ massege: "CategoryName already exist" });
-      } else {// inserting categoryName if not exists
+      } else {
+        // inserting categoryName if not exists
         const data = await db.collection("orderlist").insertOne(req.body);
         return res.json(data);
       }
