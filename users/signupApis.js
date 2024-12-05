@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { MongoClient } from "mongodb";
 import { ObjectId } from "mongodb";
+import jwt from "jsonwebtoken";
+import { SECRET_KEY } from "../constant.js";
 export const signupApis = Router();
 
 // let usersArray = [];
@@ -14,7 +16,7 @@ signupApis.post("/signup-user", async (req, res) => {
   res.json(data);
 });
 
-signupApis.get("/users/get-all-users", async (req, res) => {
+signupApis.get("/get-all-users", async (req, res) => {
   const client = new MongoClient("mongodb://localhost:27017/");
   const connection = await client.connect();
   const db = connection.db("mothadata");
@@ -30,11 +32,11 @@ signupApis.get("/users/get-all-users", async (req, res) => {
       })
       .toArray();
     console.log("GET /get-all-users called");
-    res.json({ massege: "created", data });
+    res.json({ massege: "created", data: data });
   } else {
     const data = await db.collection("users").find().toArray();
     console.log("GET /get-all-users called");
-    res.json({ massege: "created", data });
+    res.json({ massege: "created", data: data });
   }
 });
 
@@ -75,4 +77,10 @@ signupApis.patch("/update-user/:id", async (req, res) => {
     .collection("users")
     .updateOne(matcher, updateQuery);
   res.json(dbResponse);
+});
+
+signupApis.get("/generate-token", async (req, res) => {
+  const payload = { name: req.headers.name, password: req.headers.password };
+  const token = jwt.sign(payload, SECRET_KEY);
+  res.json({ token });
 });
